@@ -1,14 +1,19 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import IntroScreen from './app/screens/IntroScreen'
 import LoginScreen from './app/screens/LoginScreen'
+import ProfileScreen from './app/screens/ProfileScreen'
+import SignupScreen from './app/screens/SignupScreen'
+import SocialFeedScreen from './app/screens/SocialFeedScreen'
+
 
 export default class App extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      screen: 'login'
+      screen: 'intor'
     }
   }
 
@@ -18,12 +23,14 @@ export default class App extends React.Component {
 
     if (screen === 'login') {
       return <LoginScreen/>
+    } else if (screen === 'signup') {
+      return <LoginScreen/>
+    } else if (screen === 'profile') {
+      return <ProfileScreen/>
+    } else if (screen === 'social') {
+      return <SocialFeedScreen/>
     } else {
-      return (
-        <View style={styles.container}>
-          <IntroScreen />
-        </View>
-      )
+      return <IntroScreen />
     }
   }
 }
