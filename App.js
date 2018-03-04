@@ -13,10 +13,9 @@ export default class App extends React.Component {
     super(props)
 
     this.state = {
-      screen: 'signup'
+      screen: 'profile'
     }
   }
-
 
   render() {
     const { screen } = this.state
