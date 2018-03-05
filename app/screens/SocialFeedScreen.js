@@ -68,6 +68,7 @@ export default class SocialFeedScreen extends React.Component {
           data={SOCIAL_FEED_MOCK_DATA}
           style={styles.m}
           renderItem={({ item }) => this.renderContent({ item })}
+          keyExtractor={item => item.name}
         />
       </ScrollView>
     );

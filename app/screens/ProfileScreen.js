@@ -19,28 +19,38 @@ export default class ProfileScreen extends React.Component {
         <View style={styles.headerImageContainer}>
           <Image
             source={{ uri: 'https://avatars1.githubusercontent.com/u/18251293?s=400&u=1ee2922f2dd90d94bb4efbec7cc815ef510a0ad7&v=4' }}
-            style={{ width: '100%', height: '100%' }}
+            style={{ width: '100%', height: '100%'}}
           />
         </View>
 
         <View style={styles.profileInfoContainer}>
+
           <View style={styles.bannerContainer}>
             <Image
               source={{ uri: 'https://avatars1.githubusercontent.com/u/18251293?s=400&u=1ee2922f2dd90d94bb4efbec7cc815ef510a0ad7&v=4' }}
-              style={{ width: 100, height: 100, borderRadius: 50, marginTop: -50, marginLeft: 10 }}
+              style={{ width: 100, height: 100, borderRadius: 50, zIndex: 5}}
             />
-
           </View>
-          <View style={styles.bannerInfoContainer}>
-            <Text> 9 posts </Text>
-            <Text> 450 followers </Text>
-            <Text> 270 following </Text>
+
+          <View style={styles.bannerViewContainer}>
+            <View style={styles.bannerInfoContainer}>
+              <Text> 9 </Text>
+              <Text> 450 </Text>
+              <Text> 270 </Text>
+            </View>
+            <View style={styles.bannerInfoContainer}>
+              <Text> posts </Text>
+              <Text> followers </Text>
+              <Text> following </Text>
+            </View>
+
             <Button
               text='Edit Profile'
               clear={true}
               containerStyle={{ marginTop: 10 }}
             />
           </View>
+
         </View>
 
         <View style={styles.descriptionContainer}>
@@ -91,16 +101,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    backgroundColor: 'gray'
+    backgroundColor: 'gray',
+    paddingBottom: 10,
   },
 
   bannerContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -30, 
   },
-  bannerInfoContainer: {
+  bannerViewContainer: {
     flex: 2,
     justifyContent: 'flex-end',
+    paddingTop: 10,
+  },
+  bannerInfoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around'
   },
 
   descriptionContainer: {
