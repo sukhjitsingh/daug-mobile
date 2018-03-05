@@ -4,11 +4,17 @@ import { Button, Input } from 'react-native-elements';
 import { MaterialCommunityIcons, SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 
 export default class SignupScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Signup',
+    headerStyle: { backgroundColor: '#2C7181', borderBottomWidth: 0 },
+    headerTitleStyle: { fontSize: 16 }
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.textInputContainer}>
-        <Input
+          <Input
             containerStyle={styles.loginInput}
             placeholder="Name"
             placeholderTextColor="white"
@@ -59,7 +65,8 @@ export default class SignupScreen extends React.Component {
           <Button
             text='Signup'
             clear={true}
-            containerStyle={{marginTop: 20}}
+            containerStyle={{ marginTop: 20 }}
+            onPress={() => this.props.navigation.navigate('Home')}
           />
         </View>
       </View>

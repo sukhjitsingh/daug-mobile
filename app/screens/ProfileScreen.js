@@ -50,9 +50,10 @@ export default class ProfileScreen extends React.Component {
 
         <View style={styles.feedContainer}>
           <Button
-            text='Login'
+            text='Logout'
             clear={true}
             containerStyle={{ marginTop: 20 }}
+            onPress={() => this.props.navigation.navigate('Intro')}
           />
         </View>
 

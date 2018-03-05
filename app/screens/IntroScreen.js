@@ -5,6 +5,9 @@ import { Button, Icon } from 'react-native-elements'
 import LION_IMAGE from '../../assets/lion.png'
 
 export default class IntroScreen extends React.Component {
+  static navigationOptions = {
+    header: null,
+  };
   render() {
     return (
       <View style={styles.viewContainer}>
@@ -18,6 +21,7 @@ export default class IntroScreen extends React.Component {
         <View style={styles.buttonContainer}>
           <Button
             style={styles.button}
+            onPress={() => this.props.navigation.navigate('Login')}
             icon={
               <Icon
                 name='login'
@@ -28,6 +32,7 @@ export default class IntroScreen extends React.Component {
 
           <Button
             style={styles.button}
+            onPress={() => this.props.navigation.navigate('Signup')}
             icon={
               <Icon
                 name='logout'

@@ -4,6 +4,12 @@ import { Button, Input } from 'react-native-elements';
 import { MaterialCommunityIcons, SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 
 export default class LoginScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Account Login',
+    headerStyle: { backgroundColor: '#2C7181', borderBottomWidth: 0},
+    headerTitleStyle: { fontSize: 16 }
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -46,6 +52,7 @@ export default class LoginScreen extends React.Component {
             text='Login'
             clear={true}
             containerStyle={{marginTop: 20}}
+            onPress={() => this.props.navigation.navigate('Home')}
           />
         </View>
 

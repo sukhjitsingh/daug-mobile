@@ -7,30 +7,13 @@ import ProfileScreen from './app/screens/ProfileScreen'
 import SignupScreen from './app/screens/SignupScreen'
 import SocialFeedScreen from './app/screens/SocialFeedScreen'
 
+import RootNavigator from './app/navigation/RootNavigator'
+
 
 export default class App extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      screen: 'profile'
-    }
-  }
-
+  
   render() {
-    const { screen } = this.state
-
-    if (screen === 'login') {
-      return <LoginScreen/>
-    } else if (screen === 'signup') {
-      return <SignupScreen/>
-    } else if (screen === 'profile') {
-      return <ProfileScreen/>
-    } else if (screen === 'socialFeed') {
-      return <SocialFeedScreen/>
-    } else {
-      return <IntroScreen />
-    }
+    return <RootNavigator />
   }
 }
 
