@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
+import { LinearGradient } from 'expo';
 import { Button, Icon } from 'react-native-elements'
 
 import LION_IMAGE from '../../assets/lion.png'
@@ -11,36 +12,48 @@ export default class IntroScreen extends React.Component {
   render() {
     return (
       <View style={styles.viewContainer}>
-        <View style={styles.mainContainer}>
+        <LinearGradient
+          style={styles.mainContainer}
+          colors={['#072C34', '#2C7181']}
+          start={{ x: 0.5, y: 0.0 }}
+          end={{ x: 0.5, y: 1.0 }}
+          locations={[0.1, 0.8]}
+        >
           <Image
             source={LION_IMAGE}
             style={styles.logoImage}
           />
-          <Text>Hail the King</Text>
-        </View>
-        <View style={styles.buttonContainer}>
+          <Text style={{ fontSize: 32, fontWeight: '900', color: '#81542C' }}>Babbar Sher</Text>
+          <Text style={{ fontSize: 18, fontWeight: '400', color: '#CD915B' }}>The jungle king.</Text>
+        </LinearGradient>
+
+        <LinearGradient
+          style={styles.buttonContainer}
+          colors={['#072C34', '#2C7181']}
+          start={{ x: 0.5, y: 1.0 }}
+          end={{ x: 0.5, y: 0.0 }}
+          locations={[-0.3, 1.0]}
+        >
           <Button
-            style={styles.button}
+            text='Login'
+            buttonStyle={{
+              backgroundColor: "#81542C",
+              borderRadius: 10,
+              paddingHorizontal: 30,
+            }}
             onPress={() => this.props.navigation.navigate('Login')}
-            icon={
-              <Icon
-                name='login'
-                type='simple-line-icon'
-                color='white' />
-            }
-            text='Login' />
+          />
 
           <Button
-            style={styles.button}
+            text='Signup'
+            buttonStyle={{
+              backgroundColor: "#81542C",
+              borderRadius: 10,
+              paddingHorizontal: 30,
+            }}
             onPress={() => this.props.navigation.navigate('Signup')}
-            icon={
-              <Icon
-                name='logout'
-                type='simple-line-icon'
-                color='white' />
-            }
-            text='Signup' />
-        </View>
+          />
+        </LinearGradient>
       </View>
     );
   }
@@ -55,7 +68,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#341F0D',
+    backgroundColor: '#2C7181',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -63,13 +76,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     height: 100,
     flexDirection: 'row',
-    backgroundColor: '#81542C',
+    backgroundColor: '#072C34',
     alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'space-around'
-  },
-  button: {
-    backgroundColor: '#2C7181'
   },
 
   logoImage: {

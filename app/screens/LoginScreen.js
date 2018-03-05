@@ -50,16 +50,15 @@ export default class LoginScreen extends React.Component {
 
           <Button
             text='Login'
-            clear={true}
             containerStyle={{ marginTop: 20 }}
+            buttonStyle={{
+              backgroundColor: "#81542C",
+              borderRadius: 10,
+              paddingHorizontal: 40,
+            }}
             onPress={() => this.props.navigation.navigate('Home')}
           />
         </View>
-
-        <TouchableOpacity
-
-        />
-
       </View>
     );
   }

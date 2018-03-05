@@ -64,7 +64,11 @@ export default class SignupScreen extends React.Component {
 
           <Button
             text='Signup'
-            clear={true}
+            buttonStyle={{
+              backgroundColor: "#81542C",
+              borderRadius: 10,
+              paddingHorizontal: 40,
+            }}
             containerStyle={{ marginTop: 20 }}
             onPress={() => this.props.navigation.navigate('Home')}
           />
