@@ -10,7 +10,13 @@ export default class LoginScreen extends React.Component {
     headerTitleStyle: { fontSize: 16 }
   };
 
+
   render() {
+    function isEmail(email) {
+      const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    }
+
     return (
       <View style={styles.container}>
 
@@ -29,7 +35,6 @@ export default class LoginScreen extends React.Component {
                 color='white'
               />
             }
-
           />
 
           <Input

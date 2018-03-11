@@ -1,97 +1,150 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, FlatList, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-elements';
 
 import { SOCIAL_FEED_MOCK_DATA } from '../utils/constants'
 
 export default class ProfileScreen extends React.Component {
-  static navigationOptions = {
-    header: null,
-  };
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerVisible: navigation.state.params ? navigation.state.params.isHeaderShow : false,
+      title: 'Profile',
+      headerTintColor: '#81542C',
+      headerTitleStyle: {
+        fontSize: 20,
+      }
+    }
+  }
+
   constructor(props) {
     super(props)
+    const user = props.navigation.state.params && props.navigation.state.params.user
+    const isHeaderShow = props.navigation.state.params && props.navigation.state.params.isHeaderShow
 
     this.state = {
-      screen: 'profile'
+      user: user || SOCIAL_FEED_MOCK_DATA[0].user,
+      isHeaderShow: isHeaderShow || false
     }
   }
 
   renderContent = () => {
+    const { user } = this.state
+
+    const Component = user.posts ? ScrollView : View
+
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={styles.container}>
-          <View style={styles.headerImageContainer}>
-            <Image
-              source={{ uri: 'https://avatars1.githubusercontent.com/u/18251293?s=400&u=1ee2922f2dd90d94bb4efbec7cc815ef510a0ad7&v=4' }}
-              style={{ width: '100%', height: '100%' }}
-            />
-          </View>
-
-          <View style={styles.profileInfoContainer}>
-
-            <View style={styles.bannerContainer}>
+        <Component style={{ flex: 1 }}>
+          <View style={styles.container}>
+            <View style={styles.headerImageContainer}>
               <Image
-                source={{ uri: 'https://avatars1.githubusercontent.com/u/18251293?s=400&u=1ee2922f2dd90d94bb4efbec7cc815ef510a0ad7&v=4' }}
-                style={{ width: 100, height: 100, borderRadius: 50, zIndex: 5 }}
+                source={{ uri: user.banner }}
+                style={{ width: '100%', height: 200 }}
               />
+              <View style={styles.profileInfoContainer}>
+                <View style={styles.bannerContainer}>
+                  <Image
+                    source={{ uri: user.image }}
+                    style={{ width: 100, height: 100, borderRadius: 50, }}
+                  />
+                </View>
+
+                <View style={styles.bannerViewContainer}>
+                  <View style={styles.bannerInfoContainer}>
+                    <Text> {user.posts ? user.posts.length : 0}</Text>
+                    <Text> {user.followers} </Text>
+                    <Text> {user.following} </Text>
+                  </View>
+                  <View style={styles.bannerInfoContainer}>
+                    <Text> posts </Text>
+                    <Text> followers </Text>
+                    <Text> following </Text>
+                  </View>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 10, }}>
+                    <Button
+                      text='Edit Profile'
+                      // clear={true}
+                      buttonStyle={{
+                        backgroundColor: "#81542C",
+                        borderColor: "#81542C",
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        paddingHorizontal: 5,
+                      }}
+                      // containerStyle={{ marginTop: 10 }}
+                      onPress={() => this.props.navigation.navigate('EditProfile')}
+                    />
+                    <Button
+                      text='Logout'
+                      buttonStyle={{
+                        backgroundColor: "#81542C",
+                        borderColor: "#81542C",
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        paddingHorizontal: 5,
+                      }}
+                      // containerStyle={{ marginTop: 20 }}
+                      onPress={() => this.props.navigation.navigate('Intro')}
+                    />
+                  </View>
+                </View>
+
+              </View>
             </View>
 
-            <View style={styles.bannerViewContainer}>
-              <View style={styles.bannerInfoContainer}>
-                <Text> 9 </Text>
-                <Text> 450 </Text>
-                <Text> 270 </Text>
-              </View>
-              <View style={styles.bannerInfoContainer}>
-                <Text> posts </Text>
-                <Text> followers </Text>
-                <Text> following </Text>
-              </View>
+            <View style={styles.descriptionContainer}>
+              <Text>{user.name}</Text>
+              <Text>{user.bio}</Text>
+            </View>
 
-              <Button
-                text='Edit Profile'
-                clear={true}                
-                buttonStyle={{
-                  borderColor: "#81542C",
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  paddingHorizontal: 10,
-                }}
-                containerStyle={{ marginTop: 10 }}
-                onPress={() => this.props.navigation.navigate('EditProfile')}
-              />
+            <View style={styles.footerContainer}>
+              <Text style={{ color: 'black', padding: 10 }}>
+                {user.posts ? user.posts.length : 'NO'} POSTS</Text>
+              <View style={styles.postsContainer}>
+                {user.posts && this.renderPosts()}
+              </View>
             </View>
 
           </View>
-
-          <View style={styles.descriptionContainer}>
-            <Text>Name</Text>
-            <Text>Description...</Text>
-          </View>
-
-          <View style={styles.feedContainer}>
-            <Button
-              text='Logout'
-              clear={true}
-              buttonStyle={{
-                borderColor: "#81542C",
-                borderWidth: 1,
-                borderRadius: 8,
-                paddingHorizontal: 10,
-              }}
-              containerStyle={{ marginTop: 20 }}
-              onPress={() => this.props.navigation.navigate('Intro')}
-            />
-          </View>
-
-        </View>
+        </Component>
       </SafeAreaView>
 
     )
   }
 
-  render() {
+  renderPostSection(post, index) {   
+    return (
+      <View style={{}} key={index}>
+        <TouchableOpacity
+          style={{ padding: 5 }}
+          onPress={ () => this.props.navigation.navigate('')}
+        >
+          <Image
+            source={{ uri: post.image }}
+            style={{ width: 100, height: 100, borderRadius: 100 / 4 }}
+          />
+        </TouchableOpacity>
+        {/* <View style={{ paddingVertical: 10 }}>
+          <View>
+            <Text>{post.location}</Text>
+            <Text>{post.caption}</Text>
+          </View>
+        </View> */}
+      </View>
+    )
+  }
 
+  renderPosts() {
+    const { posts } = this.state.user
+
+    return (
+      posts.map((post, index) => {
+        return this.renderPostSection(post, index)
+      })
+    )
+  }
+
+  render() {
     return (
       this.renderContent()
       // <ScrollView>
@@ -112,16 +165,18 @@ const styles = StyleSheet.create({
   },
 
   headerImageContainer: {
-    height: 200,
-    width: '100%',
+    // height: 200,
+    // width: '100%',
+    // zIndex: -10,
   },
 
   profileInfoContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    backgroundColor: 'gray',
+    backgroundColor: '#EEEEEE',
     paddingBottom: 10,
+    // zIndex: 0,
   },
 
   bannerContainer: {
@@ -129,6 +184,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: -30,
+    elevation: 5,
+    backgroundColor: 'transparent'
   },
   bannerViewContainer: {
     flex: 2,
@@ -142,11 +199,18 @@ const styles = StyleSheet.create({
 
   descriptionContainer: {
     paddingLeft: 10,
-    backgroundColor: 'yellow'
+    backgroundColor: '#EEEEEE'
   },
 
-  feedContainer: {
+  footerContainer: {
     flex: 1,
-    backgroundColor: 'gray'
+    backgroundColor: '#EEEEEE'
+  },
+  postsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#EEEEEE',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch'
   }
 });

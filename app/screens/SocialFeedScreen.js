@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, ScrollView, FlatList, Image, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Feather, SimpleLineIcons } from '@expo/vector-icons';
 
 
 import { SOCIAL_FEED_MOCK_DATA } from '../utils/constants'
@@ -10,56 +10,72 @@ export default class SocialFeedScreen extends React.Component {
     header: null,
   };
 
+  constructor(props) {
+    super(props)
+  }
+
   renderContent = ({ item }) => {
+    const { navigate } = this.props.navigation
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.mainContainer}>
 
           <TouchableOpacity
-          // onPress={({ item }) => this.renderProfile({profile})}
+            onPress={() => navigate('Profile', { user: item.user, isHeaderShow: true })}
           >
             <View style={styles.headerContainer}>
               <Image
                 source={{ uri: item.image }}
                 style={{ width: 50, height: 50, borderRadius: 25 }}
               />
-              <View style={styles.innerHeaderContainer}>
-                <Text style={{ marginLeft: 20 }}>{item.name}</Text>
-                <Text style={{ marginLeft: 20 }}>{item.location}</Text>
+              <View style={styles.headerInfoContainer}>
+                <Text>{item.user.name}</Text>
+                <Text>{item.location}</Text>
               </View>
             </View>
           </TouchableOpacity>
 
           <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: item.post['image'] }}
-              style={{ width: '100%', height: 300 }}
-            />
+            <TouchableOpacity
+              onPress={() => navigate('PostDetailsScreen', { postDetails: item })}
+            >
+              <Image
+                source={{ uri: item.image }}
+                style={{ width: '100%', height: 300 }}
+              />
+            </TouchableOpacity>
+
             <View style={{ flexDirection: 'row', height: 50 }}>
-              <Text>{item.post['caption']}</Text>
+              <Text style={{ padding: 10 }}>{item.caption}</Text>
             </View>
           </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', height: 50 }}>
-            <Ionicons
-              name="ios-heart-outline"
-              size={30}
-              color='#085947'
-              style={{ paddingRight: 8 }}
-            />
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', height: 50 }}>
+            <View style={{ flex: 2, flexDirection: 'row', alignItems: 'center' }}>
+              <SimpleLineIcons
+                name="heart"
+                size={30}
+                color='#81542C'
+                style={{ paddingHorizontal: 10 }}
+              />
+              <Text>{item.likes}</Text>
+              <SimpleLineIcons
+                name="bubbles"
+                size={30}
+                color='#81542C'
+                style={{ paddingHorizontal: 10 }}
+              />
+              <Text>{item.comments ? item.comments.length : 0}</Text>
+            </View>
+            <View style={{ flex: 1, alignItems: 'flex-end', paddingHorizontal: 10 }}>
+              <Text>{item.date}</Text>
+            </View>
 
-            <Ionicons
-              name="ios-chatbubbles-outline"
+            {/* <SimpleLineIconsÍ
+              name="paper-plane"
               size={30}
-              color='#085947'
-              style={{ paddingRight: 8 }}
-            />
-
-            <Ionicons
-              name="ios-paper-plane-outline"
-              size={30}
-              color='#085947'
-            />
+              color='#81542C'
+            /> */}
           </View>
         </View>
       </SafeAreaView>
@@ -73,8 +89,8 @@ export default class SocialFeedScreen extends React.Component {
         <FlatList style={{ backgroundColor: 'gray', flex: 1 }}
           data={SOCIAL_FEED_MOCK_DATA}
           style={styles.m}
+          keyExtractor={(item, index) => index}
           renderItem={({ item }) => this.renderContent({ item })}
-          keyExtractor={item => item.name}
         />
       </ScrollView>
     );
@@ -83,16 +99,20 @@ export default class SocialFeedScreen extends React.Component {
 
 const styles = StyleSheet.create({
   mainContainer: {
+    flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
   },
   headerContainer: {
     flexDirection: 'row',
     height: 50,
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingTop: 30,
+    paddingBottom: 30,
+    paddingLeft: 10,
   },
-  innerHeaderContainer: {
-
+  headerInfoContainer: {
+    paddingLeft: 20,
   },
 
   imageContainer: {
