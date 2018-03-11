@@ -10,7 +10,7 @@ This repo is the mobile app for Daug. It was built as part of the [MobileSpace](
 - They can **upload selfies** or **post their thoughts** for other pets to see.
 - They can also look at **other pets posts** and either **paw** (like) or **scratch** (dislike) it.
 
-### [Demo - Try it on Expo](https://exp.host/@sukhitsingh/daug-mobile)
+### [Demo - Try it on Expo](https://exp.host/@sukhjitsingh/daug-mobile)
 
 ## Getting started
 
