@@ -3,8 +3,6 @@ import { StyleSheet, Text, View, ScrollView, FlatList, Image, TouchableOpacity, 
 import { Feather, SimpleLineIcons } from '@expo/vector-icons';
 
 
-import { SOCIAL_FEED_MOCK_DATA } from '../utils/constants'
-
 export default class SocialFeedScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -12,6 +10,64 @@ export default class SocialFeedScreen extends React.Component {
 
   constructor(props) {
     super(props)
+
+    this.state = {
+      isFeedLoading: true,
+      feedPosts: null
+    }
+  }
+
+  async componentDidMount() {
+
+    this.getFeedPosts()
+  }
+
+  async getFeedPosts() {
+    try {
+      const response = await fetch(`https://daug-app.herokuapp.com/api/feed/`, {
+        method: 'GET'
+      });
+      const responseJSON = await response.json();
+
+      if (response.status === 200) {
+        this.setState({
+          isFeedLoading: false,
+          feedPosts: responseJSON
+        })
+      } else {
+        const error = responseJSON.message
+
+        console.log("Server request failed " + error);
+      }
+    } catch (error) {
+      console.log("Server is down " + error);
+    }
+  }
+
+  _renderImage = (image) => {
+    if (image) {
+      return (
+        <Image
+          source={{ uri: image }}
+          style={{ width: '100%', height: 300 }}
+        />
+      )
+    } else {
+
+    }
+  }
+
+  _renderProfileImage = (image) => {
+    if (image) {
+      return (
+        <Image
+          source={{ uri: image }}
+          style={{ width: 50, height: 50, borderRadius: 25 }}
+        />
+      )
+    } else {
+
+    }
   }
 
   renderContent = ({ item }) => {
@@ -24,10 +80,7 @@ export default class SocialFeedScreen extends React.Component {
             onPress={() => navigate('Profile', { user: item.user, isHeaderShow: true })}
           >
             <View style={styles.headerContainer}>
-              <Image
-                source={{ uri: item.image }}
-                style={{ width: 50, height: 50, borderRadius: 25 }}
-              />
+              {this._renderProfileImage(item.user.profile_image)}
               <View style={styles.headerInfoContainer}>
                 <Text>{item.user.name}</Text>
                 <Text>{item.location}</Text>
@@ -39,14 +92,11 @@ export default class SocialFeedScreen extends React.Component {
             <TouchableOpacity
               onPress={() => navigate('PostDetailsScreen', { postDetails: item })}
             >
-              <Image
-                source={{ uri: item.image }}
-                style={{ width: '100%', height: 300 }}
-              />
+              {this._renderImage(item.image)}
             </TouchableOpacity>
 
             <View style={{ flexDirection: 'row', height: 50 }}>
-              <Text style={{ padding: 10 }}>{item.caption}</Text>
+              <Text style={{ padding: 10 }}>{item.description}</Text>
             </View>
           </View>
 
@@ -58,7 +108,7 @@ export default class SocialFeedScreen extends React.Component {
                 color='#81542C'
                 style={{ paddingHorizontal: 10 }}
               />
-              <Text>{item.likes}</Text>
+              <Text>{item.likes.length}</Text>
               <SimpleLineIcons
                 name="bubbles"
                 size={30}
@@ -87,7 +137,7 @@ export default class SocialFeedScreen extends React.Component {
     return (
       <ScrollView>
         <FlatList style={{ backgroundColor: 'gray', flex: 1 }}
-          data={SOCIAL_FEED_MOCK_DATA}
+          data={this.state.feedPosts}
           style={styles.m}
           keyExtractor={(item, index) => index}
           renderItem={({ item }) => this.renderContent({ item })}
