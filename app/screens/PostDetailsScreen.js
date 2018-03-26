@@ -2,8 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, View, ScrollView, FlatList, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Feather, SimpleLineIcons } from '@expo/vector-icons';
 
-// import { SOCIAL_FEED_MOCK_DATA } from '../utils/constants'
-
 export default class PostDetailsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: 'Post',
@@ -19,44 +17,64 @@ export default class PostDetailsScreen extends React.Component {
     const { postDetails } = props.navigation.state.params
 
     this.state = {
-      member: postDetails,
+      item: postDetails,
       liked: false,
       commented: false,
     }
   }
 
+  _renderProfileImage = (image) => {
+    if (image) {
+      return (
+        <Image
+          source={{ uri: image }}
+          style={{ width: 50, height: 50, borderRadius: 25 }}
+        />
+      )
+    } else {
+
+    }
+  }
+
+  _renderImage = (image) => {
+    if (image) {
+      return (
+        <Image
+          source={{ uri: image }}
+          style={{ width: '100%', height: 300 }}
+        />
+      )
+    } else {
+
+    }
+  }
+
   renderContent = () => {
     const { navigate } = this.props.navigation
-    const { member, liked, commented } = this.state
+    const { item, liked, commented } = this.state
 
-    const Component = member.comments ? ScrollView : View
+    const Component = item.comments ? ScrollView : View
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <Component style={{ flex: 1 }}>
-          <View style={styles.viewContainer} key={member}>
+          <View style={styles.viewContainer} key={item}>
 
             <TouchableOpacity
-              onPress={() => navigate('Profile', { user: member.user })}>
+              onPress={() => navigate('Profile', { user: item.user })}>
               <View style={styles.headerContainer}>
-                <Image
-                  source={{ uri: member.image }}
-                  style={{ width: 50, height: 50, borderRadius: 25 }}
-                />
+                {this._renderProfileImage(item.user.profile_image)}
                 <View style={styles.headerInfoContainer}>
-                  <Text>{member.user.name}</Text>
-                  <Text>{member.location}</Text>
+                  <Text>{item.user.name}</Text>
+                  <Text>{item.location}</Text>
                 </View>
               </View>
             </TouchableOpacity>
 
             <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: member.image }}
-                style={{ width: '100%', height: 300 }}
-              />
+              {this._renderImage(item.image)}
               <View style={{ flexDirection: 'row', height: 50 }}>
-                <Text style={{ padding: 10 }}>{member.caption}</Text>
+                <Text style={{ padding: 10 }}>{item.description}</Text>
               </View>
             </View>
 
@@ -68,25 +86,25 @@ export default class PostDetailsScreen extends React.Component {
                   color='#81542C'
                   style={{ paddingHorizontal: 10 }}
                 />
-                <Text>{member.likes}</Text>
+                <Text>{item.likes.length}</Text>
                 <SimpleLineIcons
                   name="bubbles"
                   size={30}
                   color='#81542C'
                   style={{ paddingHorizontal: 10 }}
                 />
-                <Text>{member.comments ? member.comments.length : 0}</Text>
+                <Text>{item.comments ? item.comments.length : 0}</Text>
               </View>
               <View style={{ flex: 1, alignItems: 'flex-end', paddingHorizontal: 10 }}>
-                <Text>{member.date}</Text>
+                <Text>{item.date}</Text>
               </View>
             </View>
 
             <View style={{ flex: 1, backgroundColor: '#EEEEEE' }}>
               <Text style={{ color: 'black', padding: 10 }}>
-                {member.comments ? member.comments.length : 'NO'} COMMENTS</Text>
+                {item.comments ? item.comments.length : 'NO'} COMMENTS</Text>
               <View style={{ flex: 1, flexDirection: 'row' }}>
-                {member.comments && this.renderComments()}
+                {item.comments && this.renderComments()}
               </View>
             </View>
           </View>
@@ -102,14 +120,14 @@ export default class PostDetailsScreen extends React.Component {
           style={{ justifyContent: 'center', paddingHorizontal: 10 }}
         >
           <Image
-            source={{ uri: comment.user.image }}
+            source={{ uri: comment.user.profile_image }}
             style={{ width: 25, height: 25, borderRadius: 25 / 2 }}
           />
         </TouchableOpacity>
         <View style={{ paddingVertical: 10 }}>
           <View>
             <Text>{comment.user.name}</Text>
-            <Text>{comment.content}</Text>
+            <Text>{comment.description}</Text>
           </View>
         </View>
       </View>
@@ -117,7 +135,7 @@ export default class PostDetailsScreen extends React.Component {
   }
 
   renderComments() {
-    const { comments } = this.state.member
+    const { comments } = this.state.item
 
     return (
       <View style={styles.commentsContainer}>
