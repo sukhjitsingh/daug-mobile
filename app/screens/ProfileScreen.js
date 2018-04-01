@@ -1,8 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, FlatList, SafeAreaView, TouchableOpacity, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, FlatList, SafeAreaView, TouchableOpacity, AsyncStorage, DeviceEventEmitter} from 'react-native';
 import { Button } from 'react-native-elements';
-
-import { SOCIAL_FEED_MOCK_DATA } from '../utils/constants'
 
 export default class ProfileScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -22,23 +20,20 @@ export default class ProfileScreen extends React.Component {
     const userId = props.navigation.state.params && props.navigation.state.params.userId
     const isHeaderShow = props.navigation.state.params && props.navigation.state.params.isHeaderShow
 
-    console.log("PROFILE-SCREEN-STATE: ", userId)
     this.state = {
-      user: user,
+      user: user || null,
       userId: userId || null,
       isLoading: false,
       isHeaderShow: isHeaderShow || false
     }
   }
 
-  async componentDidMount() {
-    if (this.userId === null) {
+  componentDidMount() {
+    if (this.state.userId === null) {
       this.getUserId()
-        .then(user => {
-          user = JSON.parse(user)
-          console.log("LOGGED IN USER-ID TEST:", user.id)
-
-          this.setState({ userId: user.id })
+        .then(res => {
+          res = JSON.parse(res)
+          this.setState({ userId: res.id })
           this.state.user === null && this.getUserData()
         })
         .catch(err => {
@@ -61,7 +56,13 @@ export default class ProfileScreen extends React.Component {
         })
         .catch(err => reject(err));
     });
-  };
+  }
+
+  componentWillMount() {
+    DeviceEventEmitter.addListener('user_profile_updated', (e) => {
+      this.getUserData()
+    })
+  }
 
   async getUserData() {
     this.setState({ isLoading: true })
@@ -73,7 +74,6 @@ export default class ProfileScreen extends React.Component {
       const responseJSON = await response.json();
 
       if (response.status === 200) {
-        console.log("JSON-RESPONSE-PROFILE-SCREEN:", responseJSON)
         this.setState({
           user: responseJSON,
           isLoading: false,
@@ -159,7 +159,7 @@ export default class ProfileScreen extends React.Component {
                         paddingHorizontal: 5,
                       }}
                       // containerStyle={{ marginTop: 10 }}
-                      onPress={() => this.props.navigation.navigate('EditProfile', { userId: user.userId })}
+                      onPress={() => this.props.navigation.navigate('EditProfile', { user: user })}
                     />
                     <Button
                       text='Logout'
