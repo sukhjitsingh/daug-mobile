@@ -54,7 +54,7 @@ export default class EditProfile extends Component {
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({ increaseCount: this.updateProfile });
+    this.props.navigation.setParams({ updateProfile: this.updateProfile });
   }
 
   updateProfile = async () => {
@@ -99,7 +99,7 @@ export default class EditProfile extends Component {
             {
               text: "Dismiss", onPress: () => {
                 DeviceEventEmitter.emit('user_profile_updated', {})
-                // this.props.navigation.goBack()
+                this.props.navigation.goBack()
               }
             }
           ],
