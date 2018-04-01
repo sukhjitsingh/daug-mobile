@@ -21,4 +21,8 @@ export default StackNavigator({
   PostDetailScreen: {
     screen: PostDetailScreen,
   }
-});
+},
+  {
+    initialRouteName: 'Profile',
+    mode: 'modal',
+  });
