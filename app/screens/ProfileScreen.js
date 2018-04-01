@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, FlatList, SafeAreaView, TouchableOpacity, AsyncStorage } from 'react-native';
 import { Button } from 'react-native-elements';
 
 import { SOCIAL_FEED_MOCK_DATA } from '../utils/constants'
@@ -19,41 +19,128 @@ export default class ProfileScreen extends React.Component {
   constructor(props) {
     super(props)
     const user = props.navigation.state.params && props.navigation.state.params.user
+    const userId = props.navigation.state.params && props.navigation.state.params.userId
     const isHeaderShow = props.navigation.state.params && props.navigation.state.params.isHeaderShow
 
+    console.log("PROFILE-SCREEN-STATE: ", userId)
     this.state = {
-      user: user || SOCIAL_FEED_MOCK_DATA[0].user,
+      user: user,
+      userId: userId || null,
+      isLoading: false,
       isHeaderShow: isHeaderShow || false
+    }
+  }
+
+  async componentDidMount() {
+    if (this.userId === null) {
+      this.getUserId()
+        .then(user => {
+          user = JSON.parse(user)
+          console.log("LOGGED IN USER-ID TEST:", user.id)
+
+          this.setState({ userId: user.id })
+          this.state.user === null && this.getUserData()
+        })
+        .catch(err => {
+          alert("An error occurred")
+        });
+    } else {
+      this.getUserData()
+    }
+  }
+
+  getUserId = () => {
+    return new Promise((resolve, reject) => {
+      AsyncStorage.getItem('user')
+        .then(res => {
+          if (res !== null) {
+            resolve(res);
+          } else {
+            resolve(null);
+          }
+        })
+        .catch(err => reject(err));
+    });
+  };
+
+  async getUserData() {
+    this.setState({ isLoading: true })
+
+    try {
+      const response = await fetch(`https://daug-app.herokuapp.com/api/users/${this.state.userId}`, {
+        method: 'GET'
+      });
+      const responseJSON = await response.json();
+
+      if (response.status === 200) {
+        console.log("JSON-RESPONSE-PROFILE-SCREEN:", responseJSON)
+        this.setState({
+          user: responseJSON,
+          isLoading: false,
+        })
+      } else {
+        const error = responseJSON.message
+
+        console.log("Server request failed " + error);
+      }
+    } catch (error) {
+      console.log("Server is down " + error);
+    }
+  }
+
+  _renderBannerImage = (image) => {
+    if (image) {
+      return (
+        <Image
+          source={{ uri: image }}
+          style={{ width: '100%', height: 200 }}
+        />
+      )
+    } else {
+      return (
+        <View style={{ width: '100%', height: 200 }}>
+
+        </View>
+      )
+    }
+  }
+
+  _renderProfileImage = (image) => {
+    if (image) {
+      return (
+        <Image
+          source={{ uri: image }}
+          style={{ width: 100, height: 100, borderRadius: 50 }}
+        />
+      )
+    } else {
+
     }
   }
 
   renderContent = () => {
     const { user } = this.state
+    { console.log("USER-INFO:", user) }
 
-    const Component = user.posts ? ScrollView : View
+
+    // const Component = user.posts ? ScrollView : View
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <Component style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }}>
           <View style={styles.container}>
             <View style={styles.headerImageContainer}>
-              <Image
-                source={{ uri: user.banner }}
-                style={{ width: '100%', height: 200 }}
-              />
+              {this._renderBannerImage(user && user.banner_image)}
               <View style={styles.profileInfoContainer}>
                 <View style={styles.bannerContainer}>
-                  <Image
-                    source={{ uri: user.image }}
-                    style={{ width: 100, height: 100, borderRadius: 50, }}
-                  />
+                  {this._renderProfileImage(user && user.profile_image)}
                 </View>
 
                 <View style={styles.bannerViewContainer}>
                   <View style={styles.bannerInfoContainer}>
-                    <Text> {user.posts ? user.posts.length : 0}</Text>
-                    <Text> {user.followers} </Text>
-                    <Text> {user.following} </Text>
+                    <Text> {user && user.posts ? user.posts.length : 0}</Text>
+                    <Text> {user && user.followers ? user.followers.length : 0} </Text>
+                    <Text> {user && user.following ? user.following.length : 0} </Text>
                   </View>
                   <View style={styles.bannerInfoContainer}>
                     <Text> posts </Text>
@@ -72,7 +159,7 @@ export default class ProfileScreen extends React.Component {
                         paddingHorizontal: 5,
                       }}
                       // containerStyle={{ marginTop: 10 }}
-                      onPress={() => this.props.navigation.navigate('EditProfile')}
+                      onPress={() => this.props.navigation.navigate('EditProfile', { userId: user.userId })}
                     />
                     <Button
                       text='Logout'
@@ -93,34 +180,34 @@ export default class ProfileScreen extends React.Component {
             </View>
 
             <View style={styles.descriptionContainer}>
-              <Text>{user.name}</Text>
-              <Text>{user.bio}</Text>
+              <Text>{user && user.name}</Text>
+              <Text>{user && user.bio}</Text>
             </View>
 
             <View style={styles.footerContainer}>
               <Text style={{ color: 'black', padding: 10 }}>
-                {user.posts ? user.posts.length : 'NO'} POSTS</Text>
+                {user && user.posts ? user.posts.length : 'NO'} POSTS</Text>
               <View style={styles.postsContainer}>
-                {user.posts && this.renderPosts()}
+                {user && user.posts && this.renderPosts()}
               </View>
             </View>
 
           </View>
-        </Component>
+        </ScrollView>
       </SafeAreaView>
 
     )
   }
 
-  renderPostSection(post, index) {   
+  renderPostSection(post, index) {
     return (
       <View style={{}} key={index}>
         <TouchableOpacity
           style={{ padding: 5 }}
-          onPress={ () => this.props.navigation.navigate('')}
+          onPress={() => this.props.navigation.navigate('')}
         >
           <Image
-            source={{ uri: post.image }}
+            source={{ uri: post && post.image || "" }}
             style={{ width: 100, height: 100, borderRadius: 100 / 4 }}
           />
         </TouchableOpacity>
@@ -136,7 +223,7 @@ export default class ProfileScreen extends React.Component {
 
   renderPosts() {
     const { posts } = this.state.user
-
+    console.log("PROFILE POSTS:", posts)
     return (
       posts.map((post, index) => {
         return this.renderPostSection(post, index)

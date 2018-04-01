@@ -59,9 +59,9 @@ export default class PostDetailsScreen extends React.Component {
       <SafeAreaView style={{ flex: 1 }}>
         <Component style={{ flex: 1 }}>
           <View style={styles.viewContainer} key={item}>
-
+            {console.log("POST-DETAILS-ITEMS:", item)}
             <TouchableOpacity
-              onPress={() => navigate('Profile', { user: item.user })}>
+              onPress={() => navigate('Profile', { user: item.user, userId: item.userId })}>
               <View style={styles.headerContainer}>
                 {this._renderProfileImage(item.user.profile_image)}
                 <View style={styles.headerInfoContainer}>

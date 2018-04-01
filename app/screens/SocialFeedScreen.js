@@ -18,7 +18,6 @@ export default class SocialFeedScreen extends React.Component {
   }
 
   async componentDidMount() {
-
     this.getFeedPosts()
   }
 
@@ -75,9 +74,8 @@ export default class SocialFeedScreen extends React.Component {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.mainContainer}>
-
           <TouchableOpacity
-            onPress={() => navigate('Profile', { user: item.user, isHeaderShow: true })}
+            onPress={() => navigate('Profile', { user: item.user, userId: item.userId, isHeaderShow: true })}
           >
             <View style={styles.headerContainer}>
               {this._renderProfileImage(item.user.profile_image)}
