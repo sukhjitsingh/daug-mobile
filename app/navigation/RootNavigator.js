@@ -1,20 +1,17 @@
-import { StackNavigator } from 'react-navigation';
+import { SwitchNavigator } from 'react-navigation';
 
+import AuthLoadingScreen from '../screens/AuthLoadingScreen'
 import IntroStack from './IntroStack'
 import HomeTabs from './HomeTabs'
 
-export default StackNavigator(
+export default SwitchNavigator(
   {
-    Intro: {
-      screen: IntroStack,
-    },
-
-    Home: {
-      screen: HomeTabs,
-    },
+    Landing: AuthLoadingScreen,
+    Intro: IntroStack,
+    Home: HomeTabs,
   },
   {
-    initialRouteName: 'Intro',
+    initialRouteName: 'Landing',
     mode: 'modal',
     headerMode: 'none'
   });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, AsyncStorage } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { MaterialCommunityIcons, SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 
@@ -16,7 +16,7 @@ export default class LoginScreen extends React.Component {
     this.state = {
       email: '',
       password: '',
-      isLoading: false
+      isLoading: true
     }
   }
 
@@ -56,7 +56,8 @@ export default class LoginScreen extends React.Component {
       if (response.status === 201) {
         responseJSON = await response.json();
 
-        console.log(responseJSON)
+        this.saveUser(responseJSON.user)
+        console.log("RESPONSE-USER", responseJSON.user)
 
         this.setState({ isLoading: false })
         Alert.alert(
@@ -84,6 +85,14 @@ export default class LoginScreen extends React.Component {
       Alert.alert('Login failed!', 'Unable to Signin. Please try again later')
     }
   }
+
+  async saveUser(user) {
+    try {
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+    } catch (error) {
+      console.error("Login save user failed:", error)
+    }
+  }
   render() {
     const { email, password } = this.state
     return (
@@ -105,7 +114,7 @@ export default class LoginScreen extends React.Component {
                 color='white'
               />
             }
-            onChangeText={(email) => this.setState({email})}
+            onChangeText={(email) => this.setState({ email })}
           />
 
           <Input
@@ -123,7 +132,7 @@ export default class LoginScreen extends React.Component {
                 color='white'
               />
             }
-            onChangeText={(password) => this.setState({password})} 
+            onChangeText={(password) => this.setState({ password })}
           />
 
           <Button
