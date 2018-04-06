@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, ScrollView, FlatList, SafeAreaView, TouchableOpacity, AsyncStorage, DeviceEventEmitter} from 'react-native';
+import { StyleSheet, Text, View, Image, ScrollView, FlatList, SafeAreaView, TouchableOpacity, Alert, AsyncStorage, DeviceEventEmitter, Dimensions } from 'react-native';
 import { Button } from 'react-native-elements';
+
+const DEVICE_WIDTH = Dimensions.get('window').width;
 
 export default class ProfileScreen extends React.Component {
   static navigationOptions = ({ navigation }) => {
@@ -41,6 +43,16 @@ export default class ProfileScreen extends React.Component {
         });
     } else {
       this.getUserData()
+
+      this.getUserId()
+        .then(response => {
+          response = JSON.parse(response)
+          this.setState({ post_detail_home_user_id: response.id })
+        })
+        .catch(err => {
+          console.error(err)
+          Alert.alert("An error occurred")
+        })
     }
   }
 
@@ -88,6 +100,57 @@ export default class ProfileScreen extends React.Component {
     }
   }
 
+  async _followUser() {
+    const { post_detail_home_user_id, userId } = this.state
+
+    try {
+      let response = await fetch(`https://daug-app.herokuapp.com/api/users/${post_detail_home_user_id}/follow/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: null
+      });
+
+      let responseJSON = null;
+
+      if (response.status === 201) {
+        responseJSON = response.json();
+
+        console.log(responseJSON);
+
+        this.getUserData();
+        this.setState({ following: true });
+
+        Alert.alert(
+          'Following user!',
+          '',
+          [
+            {
+              text: "Dismiss", onPress: () => {
+                console.log("User followed!");
+              }
+            }
+          ],
+          { cancelable: false }
+        )
+      } else {
+        responseJSON = await response.json();
+        const error = responseJSON.message;
+
+        console.log(responseJSON);
+
+        this.setState({ isLoading: false, errors: responseJSON.errors, following: false });
+
+        Alert.alert('1. Unable to follow user', `${error}`)
+      }
+    } catch (error) {
+      this.setState({ isLoading: false, error, following: false })
+
+      Alert.alert('1.2 Unable to follow user', `${error}`)
+    }
+  }
+
   _renderBannerImage = (image) => {
     if (image) {
       return (
@@ -98,9 +161,12 @@ export default class ProfileScreen extends React.Component {
       )
     } else {
       return (
-        <View style={{ width: '100%', height: 200 }}>
+        <View style={{ marginTop: 40 }}>
 
         </View>
+        // <Image style={{ width: '100%', height: 200 }}
+        //   source={require('../../assets/profile.png')}
+        // />
       )
     }
   }
@@ -114,7 +180,12 @@ export default class ProfileScreen extends React.Component {
         />
       )
     } else {
-
+      return (
+        <Image
+          source={require('../../assets/profile.png')}
+          style={{ width: 100, height: 100, borderRadius: 50 }}
+        />
+      )
     }
   }
 
@@ -123,7 +194,7 @@ export default class ProfileScreen extends React.Component {
     { console.log("USER-INFO:", user) }
 
 
-    // const Component = user.posts ? ScrollView : View
+    // const Component = user && user.posts ? ScrollView : View
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -132,21 +203,26 @@ export default class ProfileScreen extends React.Component {
             <View style={styles.headerImageContainer}>
               {this._renderBannerImage(user && user.banner_image)}
               <View style={styles.profileInfoContainer}>
-                <View style={styles.bannerContainer}>
+                <View style={styles.profileContainer}>
                   {this._renderProfileImage(user && user.profile_image)}
                 </View>
+                <View style={{ flex: 3 }}>
 
-                <View style={styles.bannerViewContainer}>
-                  <View style={styles.bannerInfoContainer}>
-                    <Text> {user && user.posts ? user.posts.length : 0}</Text>
-                    <Text> {user && user.followers ? user.followers.length : 0} </Text>
-                    <Text> {user && user.following ? user.following.length : 0} </Text>
+                  <View style={styles.statusViewContainer}>
+                    <View style={styles.statusInfoContainer}>
+                      <Text> {user && user.posts ? user.posts.length : 0}</Text>
+                      <Text> posts </Text>
+                    </View>
+                    <View style={styles.statusInfoContainer}>
+                      <Text> {user && user.followers ? user.followers.length : 0} </Text>
+                      <Text> followers </Text>
+                    </View>
+                    <View style={styles.statusInfoContainer}>
+                      <Text> {user && user.following ? user.following.length : 0} </Text>
+                      <Text> following </Text>
+                    </View>
                   </View>
-                  <View style={styles.bannerInfoContainer}>
-                    <Text> posts </Text>
-                    <Text> followers </Text>
-                    <Text> following </Text>
-                  </View>
+
                   <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 10, }}>
                     <Button
                       text='Edit Profile'
@@ -155,23 +231,20 @@ export default class ProfileScreen extends React.Component {
                         backgroundColor: "#81542C",
                         borderColor: "#81542C",
                         borderWidth: 1,
-                        borderRadius: 8,
                         paddingHorizontal: 5,
                       }}
                       // containerStyle={{ marginTop: 10 }}
                       onPress={() => this.props.navigation.navigate('EditProfile', { user: user })}
                     />
                     <Button
-                      text='Logout'
+                      text={this.state.following ? 'Following' : 'Follow'}
+                      onPress={() => this._followUser()}
                       buttonStyle={{
                         backgroundColor: "#81542C",
                         borderColor: "#81542C",
                         borderWidth: 1,
-                        borderRadius: 8,
                         paddingHorizontal: 5,
                       }}
-                      // containerStyle={{ marginTop: 20 }}
-                      onPress={() => this.props.navigation.navigate('Intro')}
                     />
                   </View>
                 </View>
@@ -190,6 +263,17 @@ export default class ProfileScreen extends React.Component {
               <View style={styles.postsContainer}>
                 {user && user.posts && this.renderPosts()}
               </View>
+              <Button
+                text='Logout'
+                buttonStyle={{
+                  backgroundColor: "#81542C",
+                  borderColor: "#81542C",
+                  borderWidth: 1,
+                  paddingHorizontal: 5,
+                }}
+                // containerStyle={{ marginTop: 20 }}
+                onPress={() => this.props.navigation.navigate('Intro')}
+              />
             </View>
 
           </View>
@@ -201,22 +285,16 @@ export default class ProfileScreen extends React.Component {
 
   renderPostSection(post, index) {
     return (
-      <View style={{}} key={index}>
+      <View style={[{ width: DEVICE_WIDTH / 3, height: DEVICE_WIDTH / 3 }]} key={index}>
         <TouchableOpacity
-          style={{ padding: 5 }}
-          onPress={() => this.props.navigation.navigate('')}
+          style={{ padding: 4 }}
+        // onPress={() => this.props.navigation.navigate('PostDetailsScreen', { postDetails: post })}
         >
           <Image
             source={{ uri: post && post.image || "" }}
-            style={{ width: 100, height: 100, borderRadius: 100 / 4 }}
+            style={{ width: 100, height: 100 }}
           />
         </TouchableOpacity>
-        {/* <View style={{ paddingVertical: 10 }}>
-          <View>
-            <Text>{post.location}</Text>
-            <Text>{post.caption}</Text>
-          </View>
-        </View> */}
       </View>
     )
   }
@@ -234,13 +312,6 @@ export default class ProfileScreen extends React.Component {
   render() {
     return (
       this.renderContent()
-      // <ScrollView>
-      //   <FlatList style={{ backgroundColor: 'gray', flex: 1 }}
-      //     data={SOCIAL_FEED_MOCK_DATA}
-      //     style={styles.m}
-      //     renderItem={({ item }) => this.renderContent({ item })}
-      //   />
-      // </ScrollView>
     );
   }
 }
@@ -248,7 +319,7 @@ export default class ProfileScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'red',
+    backgroundColor: '#EEEEEE',
   },
 
   headerImageContainer: {
@@ -258,30 +329,33 @@ const styles = StyleSheet.create({
   },
 
   profileInfoContainer: {
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'flex-start',
     backgroundColor: '#EEEEEE',
     paddingBottom: 10,
-    // zIndex: 0,
+    zIndex: 0,
   },
 
-  bannerContainer: {
+  profileContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -30,
+    marginTop: -20,
     elevation: 5,
-    backgroundColor: 'transparent'
+    zIndex: 1,    
+    marginLeft: 10,
   },
-  bannerViewContainer: {
-    flex: 2,
-    justifyContent: 'flex-end',
-    paddingTop: 10,
-  },
-  bannerInfoContainer: {
+  statusViewContainer: {
+    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  statusInfoContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   descriptionContainer: {
@@ -297,7 +371,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#EEEEEE',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    alignItems: 'stretch'
+    // alignItems: 'flex-start',
   }
 });
