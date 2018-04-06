@@ -65,7 +65,6 @@ export default class IntroScreen extends React.Component {
             text='Login'
             buttonStyle={{
               backgroundColor: "#81542C",
-              borderRadius: 10,
               paddingHorizontal: 30,
             }}
             onPress={() => this.props.navigation.navigate('Login')}
@@ -75,7 +74,6 @@ export default class IntroScreen extends React.Component {
             text='Signup'
             buttonStyle={{
               backgroundColor: "#81542C",
-              borderRadius: 10,
               paddingHorizontal: 30,
             }}
             onPress={() => this.props.navigation.navigate('Signup')}

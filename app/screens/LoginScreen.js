@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert, AsyncStorage } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, AsyncStorage, KeyboardAvoidingView } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import { MaterialCommunityIcons, SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 
@@ -96,57 +96,60 @@ export default class LoginScreen extends React.Component {
   render() {
     const { email, password } = this.state
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView behavior='padding' style={styles.container}>
+        <View style={styles.container}>
 
-        <View style={styles.textInputContainer}>
-          <Input
-            containerStyle={styles.loginInput}
-            placeholder="Email"
-            placeholderTextColor="white"
-            value={this.email}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="next"
-            leftIcon={
-              <MaterialCommunityIcons
-                name="email"
-                size={24}
-                color='white'
-              />
-            }
-            onChangeText={(email) => this.setState({ email })}
-          />
+          <View style={styles.textInputContainer}>
+            <Input
+              containerStyle={styles.loginInput}
+              placeholder="Email"
+              placeholderTextColor="white"
+              value={this.email}
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="next"
+              onSubmitEditing={() => this.refs.txtPwd.focus()}
+              leftIcon={
+                <MaterialCommunityIcons
+                  name="email"
+                  size={24}
+                  color='white'
+                />
+              }
+              onChangeText={(email) => this.setState({ email })}
+            />
 
-          <Input
-            containerStyle={styles.loginInput}
-            placeholder="Password"
-            placeholderTextColor="white"
-            value={this.password}
-            autoCapitalize="none"
-            autoCorrect={false}
-            secureTextEntry={true}
-            leftIcon={
-              <MaterialCommunityIcons
-                name='lock'
-                size={24}
-                color='white'
-              />
-            }
-            onChangeText={(password) => this.setState({ password })}
-          />
+            <Input
+              containerStyle={styles.loginInput}
+              placeholder="Password"
+              placeholderTextColor="white"
+              value={this.password}
+              autoCapitalize="none"
+              autoCorrect={false}
+              secureTextEntry={true}
+              leftIcon={
+                <MaterialCommunityIcons
+                  name='lock'
+                  size={24}
+                  color='white'
+                />
+              }
+              ref={'txtPwd'}
+              onChangeText={(password) => this.setState({ password })}
+            />
 
-          <Button
-            text='Login'
-            containerStyle={{ marginTop: 20 }}
-            buttonStyle={{
-              backgroundColor: "#81542C",
-              borderRadius: 10,
-              paddingHorizontal: 40,
-            }}
-            onPress={() => this.loginButtonPressed()}
-          />
+            <Button
+              text='Login'
+              containerStyle={{ marginTop: 20 }}
+              buttonStyle={{
+                backgroundColor: "#81542C",
+                paddingHorizontal: 40,
+              }}
+              onPress={() => this.loginButtonPressed()}
+            />
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

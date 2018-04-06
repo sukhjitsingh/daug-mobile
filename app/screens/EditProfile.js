@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ImageEditor, DeviceEventEmitter } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ImageEditor, DeviceEventEmitter, KeyboardAvoidingView } from 'react-native';
 import { Input } from 'react-native-elements';
 import { ImagePicker } from 'expo';
 import { RNS3 } from 'react-native-aws3';
-
 
 
 export default class EditProfile extends Component {
@@ -188,43 +187,45 @@ export default class EditProfile extends Component {
     const { user, userName, userBio, userProfileImage } = this.state
     console.log("EDIT-PROFILE-RENDER", this.state.user)
     return (
-      <View style={styles.container}>
-        <View style={styles.bannerContainer}>
-          {this._renderProfileImage(userProfileImage)}
-          <TouchableOpacity onPress={() => this.pickImage()} >
-            <Text style={{ paddingTop: 10 }}>Change Photo</Text>
-          </TouchableOpacity>
+      <KeyboardAvoidingView behavior='padding' style={styles.container}>
+        <View style={styles.container}>
+          <View style={styles.bannerContainer}>
+            {this._renderProfileImage(userProfileImage)}
+            <TouchableOpacity onPress={() => this.pickImage()} >
+              <Text style={{ paddingTop: 10 }}>Change Photo</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.contentContainer}>
+            <Text>Name</Text>
+            <Input
+              containerStyle={styles.loginInput}
+              value={userName}
+              onChangeText={userName => this.setState({ userName })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="next"
+            />
+            <Text>Bio</Text>
+            <Input
+              containerStyle={styles.loginInput}
+              value={userBio}
+              onChangeText={userBio => this.setState({ userBio })}
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="next"
+            />
+            <Text>PRIVATE INFORMATION</Text>
+            <Text>Email</Text>
+            <Input
+              containerStyle={styles.loginInput}
+              value={user.email}
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="next"
+            />
+          </View>
         </View>
-        <View style={styles.contentContainer}>
-          <Text>Name</Text>
-          <Input
-            containerStyle={styles.loginInput}
-            value={userName}
-            onChangeText={userName => this.setState({ userName })}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="next"
-          />
-          <Text>Bio</Text>
-          <Input
-            containerStyle={styles.loginInput}
-            value="Its the sher within."
-            onChangeText={userBio => this.setState({ userBio })}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="next"
-          />
-          <Text>PRIVATE INFORMATION</Text>
-          <Text>Email</Text>
-          <Input
-            containerStyle={styles.loginInput}
-            value={user.email}
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="next"
-          />
-        </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
