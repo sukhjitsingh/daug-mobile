@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, FlatList, Image, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, FlatList, Image, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { Feather, SimpleLineIcons } from '@expo/vector-icons';
+
+import { timeSince } from '../utils/helpers';
 
 export default class PostDetailsScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -15,13 +17,94 @@ export default class PostDetailsScreen extends React.Component {
     super(props)
 
     const { postDetails } = props.navigation.state.params
+    console.log('POST-DETALES-TEST-UserId:', postDetails.userId)
+    console.log('POST-DETALES-TEST-PostId:', postDetails.id)
+    console.log('POST-DETALES-TEST-FEED-POSTS:', postDetails)
 
     this.state = {
-      item: postDetails,
+      postId: postDetails.id || null,
+      item: postDetails || null,
       liked: false,
       commented: false,
     }
   }
+
+  async componentDidMount() {
+    const { postId } = this.state
+    console.log('POST-DETAILS-MOUNT:', postId)
+    if (postId === null) {
+      Alert.alert(
+        'Unable to display Post!',
+        'Please try again later',
+        [
+          {
+            text: "OK", onPress: () => {
+              this.props.navigation.goBack()
+            }
+          }
+        ],
+        { cancelable: false }
+      )
+    } else {
+      await this._fetchPost()
+    }
+
+  }
+
+  async _fetchPost() {
+    this.setState({ isLoading: true });
+    const { postId } = this.state
+    try {
+      const response = await fetch(`https://daug-app.herokuapp.com/api/posts/${postId}`, {
+        method: 'GET'
+      });
+      const responseJSON = await response.json();
+
+      if (response.status === 200) {
+        console.log(responseJSON);
+        console.log('POST-DETALES-FETCH-POST:', responseJSON)
+
+
+        this.setState({ item: responseJSON, isLoading: false })
+      } else {
+        const error = responseJSON.message
+
+        console.log("failed" + error);
+      }
+    } catch (error) {
+      console.log("failed" + error);
+    }
+  }
+
+  async _fetchUser() {
+    this.setState({ isLoading: true });
+    console.log('POST-DETALES-FETCH-USER-ID:', this.state.item.userId)
+
+
+    try {
+      let response = await fetch(`https://daug-app.herokuapp.com/api/users/${this.state.item.userId}`, {
+        method: 'GET'
+      });
+
+      let responseJSON = null
+
+      if (response.status === 200) {
+        responseJSON = await response.json();
+
+        console.log(responseJSON);
+
+        this.setState({ user: responseJSON, isLoading: false })
+      } else {
+        responseJSON = await response.json();
+        const error = responseJSON.message
+
+        console.log("failed" + error);
+      }
+    } catch (error) {
+      console.log("failed" + error);
+    }
+  }
+
 
   _renderProfileImage = (image) => {
     if (image) {
@@ -53,7 +136,7 @@ export default class PostDetailsScreen extends React.Component {
     const { navigate } = this.props.navigation
     const { item, liked, commented } = this.state
 
-    const Component = item.comments ? ScrollView : View
+    const Component = item && item.comments ? ScrollView : View
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -96,7 +179,7 @@ export default class PostDetailsScreen extends React.Component {
                 <Text>{item.comments ? item.comments.length : 0}</Text>
               </View>
               <View style={{ flex: 1, alignItems: 'flex-end', paddingHorizontal: 10 }}>
-                <Text>{item.date}</Text>
+                <Text>{timeSince(item.createdAt)}</Text>
               </View>
             </View>
 
@@ -114,10 +197,12 @@ export default class PostDetailsScreen extends React.Component {
   }
 
   renderCommentSection(comment, index) {
+    const { navigate } = this.props.navigation    
     return (
       <View style={{ flexDirection: 'row' }} key={index}>
         <TouchableOpacity
           style={{ justifyContent: 'center', paddingHorizontal: 10 }}
+          onPress={() => navigate('Profile', { user: comment.user, userId: comment.userId })}
         >
           <Image
             source={{ uri: comment.user.profile_image }}
