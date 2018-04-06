@@ -50,8 +50,8 @@ export default class IntroScreen extends React.Component {
             source={LION_IMAGE}
             style={styles.logoImage}
           />
-          <Text style={{ fontSize: 32, fontWeight: '900', color: '#81542C' }}>Babbar Sher</Text>
-          <Text style={{ fontSize: 18, fontWeight: '400', color: '#CD915B' }}>The jungle king.</Text>
+          <Text style={{ paddingVertical: 10, fontSize: 32, fontWeight: '900', color: '#81542C' }}>Daug!</Text>
+          <Text style={{ fontSize: 18, fontWeight: '400', color: '#CD915B' }}>Am anml for the jungle...</Text>
         </LinearGradient>
 
         <LinearGradient

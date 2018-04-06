@@ -12,8 +12,8 @@ export default class EditProfile extends Component {
 
     return {
       title: 'Edit Profile',
-      headerStyle: { backgroundColor: '#2C7181', borderBottomWidth: 0 },
-      headerTitleStyle: { fontSize: 20 },
+      headerStyle: { borderBottomWidth: 0 },
+      headerTitleStyle: { color: '#81542C', fontSize: 20 },
 
       headerLeft: (
         <TouchableOpacity

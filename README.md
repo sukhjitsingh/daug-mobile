@@ -12,21 +12,21 @@
 ### Demo and some screenshots
 ### [Demo - Try it on Expo](https://exp.host/@sukhjitsingh/daug-mobile)
 
-<!-- <div style={{display: flex; flex-direction: row}}>
+<div style={{display: flex; flex-direction: row}}>
   <img src="screenshots/intro.png" width="270" />
   <img src="screenshots/signup.png" width="270" />
   <img src="screenshots/login.png" width="270" />
 </div>
 <div style={{display: flex; flex-direction: row}}>
-  <img src="screenshotsl/feed.png" width="270" />
+  <img src="screenshots/feed.png" width="270" />
   <img src="screenshots/post.png" width="270" />
   <img src="screenshots/create.png" width="270" />
 </div>
 <div style={{display: flex; flex-direction: row}}>
-  <img src="screenshots/follow.png" width="270" />
+  <img src="screenshots/like.png" width="270" />
   <img src="screenshots/profile.png" width="270" />
   <img src="screenshots/edit.png" width="270" />
-</div> -->
+</div>
 
 ## Getting started
 

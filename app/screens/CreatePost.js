@@ -8,8 +8,8 @@ import { RNS3 } from 'react-native-aws3';
 export default class CreatePost extends Component {
   static navigationOptions = {
     title: 'Create Post',
-    headerStyle: { backgroundColor: '#2C7181', borderBottomWidth: 0 },
-    headerTitleStyle: { fontSize: 20 },
+    headerStyle: { borderBottomWidth: 0 },
+    headerTitleStyle: { color: '#81542C', fontSize: 20 },
   };
 
   constructor(props) {
